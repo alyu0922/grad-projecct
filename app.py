@@ -15,7 +15,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = os.urandom(24)
 
 # Gemini API Key
-API_KEY = 'AIzaSyB3W0mQdriloelY0HG_Z3nBe8GsIDxcO3A'
+API_KEY = 'AIzaSyCLflM42GN6qEhkWdzBNyu8lN3NLgcK_hQ'
 genai.configure(api_key=API_KEY)
 
 def parse_model_output(text):
@@ -57,7 +57,7 @@ def generate_suggested_questions(context):
         truncated_context = context[:4000]  # 限制文字長度避免 API 超載
         prompt = f"{prompt_template.strip()}\n\n{truncated_context}"
 
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(prompt)
 
         if not response or not response.text:
@@ -86,7 +86,7 @@ def analyze_judgment(file_path):
 
         prompt = f"{prompt_template}\n判決書內容如下：\n{content}"
 
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(prompt)
         return response.text if response and response.text else "⚠ AI 沒有回傳任何分析內容。"
 
@@ -272,7 +272,7 @@ def ask_question():
                 f"使用者：{user_question}"
             )
 
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-2.5-flash')
             response = model.generate_content(prompt)
             ai_answer = response.text if response and hasattr(response, 'text') else "⚠ AI 無法提供回應。"
 
