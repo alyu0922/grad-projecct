@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>分析結果</title>
+    <style>
+        /* === 整體背景與版面設定 === */
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9, #a8e6cf);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 頁面標題 */
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        /* 主容器 */
+        .container {
+            width: 90%;
+            max-width: 960px;
+            margin-top: 30px;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 判決書區塊 */
+        .section {
+            background: #f8f9fa;
+            border-left: 4px solid #198754;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .section h3 {
+            margin-top: 0;
+            color: #198754;
+        }
+
+        /* 問答區容器 */
+        .chat-area {
+            width: 100%;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 聊天記錄樣式 */
+        .chat-history {
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-entry {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* 使用者提問樣式 */
+        .user-message {
+            align-self: flex-end;
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-radius: 16px 16px 0 16px;
+            padding: 12px 16px;
+            max-width: 70%;
+            text-align: left;
+            margin-bottom: 4px;
+        }
+
+        /* AI 回答樣式 */
+        .ai-message {
+            align-self: flex-start;
+            background-color: #ffffff;
+            color: #212529;
+            border-radius: 16px 16px 16px 0;
+            border: 1px solid #dee2e6;
+            padding: 12px 16px;
+            max-width: 70%;
+            text-align: left;
+        }
+
+        /* 提問表單區塊 */
+        .chat-form {
+            width: 100%;
+            max-width: 720px;
+            margin-top: 20px;
+        }
+
+        .chat-form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            resize: vertical;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .chat-form button {
+            margin-top: 10px;
+            background-color: #198754;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .chat-form button:hover {
+            background-color: #146c43;
+        }
+
+        /* 回首頁按鈕樣式 */
+        .back-home {
+            width: 100%;
+            max-width: 960px;
+            margin: 30px auto 60px auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .home-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #495057;
+        }
+
+        /* AI 輸出動畫 */
+        #loading-indicator {
+            font-size: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        /* 推薦問題樣式 */
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            padding: 10px 0;
+            border-top: 1px dashed #ccc;
+            border-bottom: 1px dashed #ccc;
+            justify-content: flex-start;
+            background-color: #f1fdf6;
+            border-radius: 8px;
+        }
+
+        .suggested-questions form {
+            display: inline-block;
+        }
+
+        .suggested-questions button {
+            background-color: #e9f5ec;
+            color: #198754;
+            border: 1px solid #198754;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggested-questions button:hover {
+            background-color: #198754;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 判決書標題 -->
+        <h2>{{ title.strip() if title else '無標題' }}</h2>
+
+        <!-- 分析內容（六大區塊） -->
+        <div class="section"><h3>案件種類</h3><p>{{ case_type | default('無資料') | replace('\n', '<br>') | replace('。', '。<br>') | replace('；', '；<br>') | safe }}</p></div>
+        <div class="section"><h3>案件概要</h3><p>{{ summary | default('無資料') | replace('\n', '<br>') | replace('。', '。<br>') | replace('；', '；<br>') | safe }}</p></div>
+        <div class="section"><h3>原告請求賠償</h3><p>{{ claims | default('無資料') | replace('\n', '<br>') | replace('。', '。<br>') | replace('；', '；<br>') | safe }}</p></div>
+        <div class="section"><h3>適用法律</h3><p>{{ laws | default('無資料') | replace('\n', '<br>') | replace('。', '。<br>') | replace('；', '；<br>') | safe }}</p></div>
+        <div class="section"><h3>判決結果</h3><p>{{ result | default('無資料') | replace('\n', '<br>') | replace('。', '。<br>') | replace('；', '；<br>') | safe }}</p></div>
+        <div class="section"><h3>判決理由</h3><p>{{ reason | default('無資料') | replace('\n', '<br>') | replace('。', '。<br>') | replace('；', '；<br>') | safe }}</p></div>
+
+        <!-- 問答互動區塊 -->
+        <div class="chat-area">
+            <!-- 僅在尚未提問時顯示建議問題 -->
+            {% if suggested_questions and not chat_history %}
+            <div class="suggested-questions">
+                {% for q in suggested_questions %}
+                <form method="post" action="/ask">
+                    <input type="hidden" name="question" value="{{ q }}">
+                    <button type="submit">{{ q }}</button>
+                </form>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- 聊天歷史記錄區 -->
+            <div class="chat-history">
+                {% if chat_history %}
+                    {% for chat in chat_history %}
+                        <div class="chat-entry">
+                            <div class="user-message">{{ chat.question | default('無問題') }}</div>
+                            <div class="ai-message">{{ chat.answer | default('無回答') | replace('\n', '<br>') | replace('。', '。<br>') | safe }}</div>
+
+                            <!-- 最新回答底下再次顯示建議問題 -->
+                            {% if loop.last and suggested_questions %}
+                            <div class="suggested-questions">
+                                {% for q in suggested_questions %}
+                                    <form method="post" action="/ask">
+                                        <input type="hidden" name="question" value="{{ q }}">
+                                        <button type="submit">{{ q }}</button>
+                                    </form>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #666;">目前尚未有任何提問，請輸入你的問題。</p>
+                {% endif %}
+            </div>
+
+            <!-- 提問輸入框 -->
+            <form method="post" action="/ask" class="chat-form">
+                <textarea name="question" placeholder="推薦的問題要能從判決書中完全得到依據" required></textarea>
+                <button type="submit">送出</button>
+            </form>
+
+            <!-- 輸出等待提示 -->
+            <div id="loading-indicator" style="display: none; margin-top: 15px; color: #888; font-style: italic;">
+                <span id="loading-text">AI 正在輸出</span><span class="dot">.</span>
+            </div>
+
+            <!-- 動畫 -->
+            <script>
+                const form = document.querySelector('form');
+                const loading = document.getElementById('loading-indicator');
+                const loadingText = document.getElementById('loading-text');
+                const dot = document.querySelector('.dot');
+
+                if (form) {
+                    form.addEventListener('submit', () => {
+                        loading.style.display = 'block';
+                        let count = 0;
+                        setInterval(() => {
+                            count = (count + 1) % 4;
+                            dot.textContent = '.'.repeat(count);
+                        }, 500);
+                    });
+                }
+            </script>
+        </div>
+
+        <!-- 回首頁按鈕 -->
+        <div class="back-home">
+            <a href="/" class="home-button">⟵ 回到首頁</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>判決書預覽</title>
+    <style>
+        /* 設定整體背景與排版 */
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #eafaf1, #c8f2df);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 預覽區主容器樣式 */
+        .preview-container {
+            width: 90%;
+            max-width: 900px;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);  /* 陰影柔化 */
+        }
+
+        /* 標題樣式 */
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #198754;
+            padding-bottom: 10px;
+            color: #198754;
+        }
+
+        /* 判決書原始文字區塊樣式 */
+        .preview-text {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            white-space: pre-wrap;        /* 保留換行與空白 */
+            line-height: 1.6;
+            font-size: 16px;
+            border: 1px solid #dee2e6;
+        }
+
+        /* 開始分析按鈕樣式 */
+        .btn-analyze {
+            margin: 30px auto 0 auto;     /* 垂直置中顯示 */
+            display: block;
+            background-color: #198754;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-analyze:hover {
+            background-color: #146c43;
+            transform: translateY(-2px);  /* 滑鼠懸停輕微上移 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 主體內容開始 -->
+    <div class="preview-container">
+        <!-- 顯示檔名 -->
+        <h2>預覽：{{ filename }}</h2>
+
+        <!-- 顯示判決書原始內容 -->
+        <div class="preview-text">{{ content }}</div>
+
+        <!-- 分析表單，將 file_path 傳送到 /analyze -->
+        <form method="post" action="/analyze">
+            <input type="hidden" name="file_path" value="{{ file_path }}">
+            <button class="btn-analyze" type="submit">開始分析</button>
+        </form>
+    </div>
+</body>
+</html>
