@@ -1,4 +1,3 @@
 Flask
-request
-jsonify
-session
+gunicorn
+requests
