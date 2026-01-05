@@ -15,7 +15,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = os.urandom(24)
 
 # Gemini API Key
-API_KEY = 'AIzaSyCLflM42GN6qEhkWdzBNyu8lN3NLgcK_hQ'
+API_KEY = 'YOUR_API_REPLACE_HERE'# API REPLACE
 genai.configure(api_key=API_KEY)
 
 def parse_model_output(text):
